@@ -1,0 +1,1 @@
+#https://www.kaggle.com/code/theaayushbajaj/content-based-image-retrieval-pytorch/notebook#Data-Preparation
