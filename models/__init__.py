@@ -1,3 +1,3 @@
 from .extractor import *
 
-__all__ = ["UNetCompressor", "ResNetCompressor"]
+__all__ = ["ResNetCompressor", "VGGCompressor"]
