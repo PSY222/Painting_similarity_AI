@@ -1,11 +1,12 @@
 import os
 import argparse
 import torch
+from PIL import Image
+import matplotlib.pyplot as plt
 from utils.download_img import ImageDownloader
 from utils.evaluation import evaluation_metrics
 from utils.retrieve import ImageRetrieval
-from models.vgg_compressor import VGGCompressor
-from models.resnet_compressor import ResNetCompressor
+from models.extractor import VGGCompressor,ResNetCompressor
 
 def main(args):
     # Set up basic parameters
@@ -30,16 +31,16 @@ def main(args):
         downloader.download_painting(percent=percent)
 
     # Retrieve similar images
-    image_retrieval = ImageRetrieval(compressor=compressor, img_path=data_path,k=args.k device=device)
+    image_retrieval = ImageRetrieval(compressor=compressor, img_path=data_path,k=args.k, device=device)
     similar_images = image_retrieval.retrieve_similar_images(query_image_path, metric=args.metric, face_crop=args.face_crop)
     
     # Evaluation metrics
     # 1. Visualisation
     eval = evaluation_metrics(data_path)
     eval.visualize_images(similar_images,query_image_path)
-    
+
     # 2. Quantitative Evaluation
-    avg_ssim, avg_rmse = eval.calculate_average_precision(similar_images,query_image_path)
+    avg_ssim, avg_rmse = eval.eval_results(query_image_path,similar_images)
     
     print('AVG_SSIM : ',avg_ssim)
     print('AVG_RMSE : ',avg_rmse)
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('--download', action='store_true', help="Download paintings if specified.")
     parser.add_argument('--k', type=int, default=5, help="Number of similar images to retrieve")
     parser.add_argument('--percent', type=int, default=100, help="Percentage of paintings to download. Default is 100.")
-    parser.add_argument('--query_image_path', type=str, ,default="./data/images/0.jpg",
+    parser.add_argument('--query_image_path', type=str ,default="./data/images/0.jpg",
                         help="Path to the query image.")
     parser.add_argument('--metric', type=str, default='cosine', choices=['euclidean', 'cosine','manhattan'],
                         help="Distance metric for the similarity calculation. (default: euclidean).")
