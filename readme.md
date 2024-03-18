@@ -90,10 +90,28 @@ As the example above shows, existing face detection model showed poor performanc
 
 Identifying similarities between paintings depends on two key factors: extracting hidden features effectively and selecting suitable evaluation metrics. If this model serves as the foundation of a hidden image discovery system and is refined with multispectral data, along with evaluation using balanced metrics like SSIM and RMSE, it could lead to innovative performance. I am eager to utilize this model as the cornerstone for developing a robust hidden image discovery system, contributing to meaningful findings in art history and unveiling hidden images to the world.
  
+ ---
  ## 💻 Implementation Guide
  
+ Refer to this [notebook](tutorials.ipynb) for the general guideline.
+ 
+1. Install Required Packages:
+Ensure that you have the required packages installed by running:
 ```
-!python main.py --compressor vgg --download --percent 50 --query_image_path "./data/images/0.jpg" --metric cosine
+ !pip install -r requirements.txt
+```
+
+2. Run the Main Script:
+Execute the main script with appropriate arguments:
+ 
+--compressor vgg: Specifies the compressor to use (in this case, 'vgg').
+--download: Indicates to download necessary resources.
+--percent 100: Specifies the percentage (100%) of datasets you want to use. (default 100)
+--query_image_path "./data/images/0.jpg": Specifies the path to the query image.
+--metric cosine: Specifies the similarity metric to be used (default 'cosine').
+
+```
+!python main.py --compressor vgg --download --percent 100 --query_image_path "./data/images/0.jpg" --metric cosine
 ```
  
 
