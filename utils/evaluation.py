@@ -34,6 +34,7 @@ class evaluation_metrics:
             axes[i].imshow(image)
             axes[i].set_title(f'Similar Image {i} ({file_name})')
             axes[i].axis('off')
+
         plt.tight_layout()
         plt.show();
 
