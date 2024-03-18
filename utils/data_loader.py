@@ -4,7 +4,7 @@ from torchvision import transforms
 from torch.utils.data import Dataset
 
 class ImageDataset(Dataset):
-        """
+    """
     Custom PyTorch Dataset class for loading images from a DataFrame.
 
     Args:

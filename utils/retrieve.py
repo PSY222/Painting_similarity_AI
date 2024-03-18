@@ -13,7 +13,7 @@ from models.extractor import VGGCompressor, ResNetCompressor, FaceCropper
 
 
 class ImageRetrieval:
-       """
+    """
     A class for retrieving similar images based on feature similarity using a given compressor model.
 
     Attributes:
@@ -39,10 +39,9 @@ class ImageRetrieval:
         """
         Extracts features from the images.
         """
-        ##################check how to deal with URL error########################
-        merged_df = self.merged_df[self.merged_df['objectid'] != 10] # objectid with URL error
+        # merged_df = self.merged_df[self.merged_df['objectid'] != 10] # objectid with URL error
         #Load the images
-        image_dataset = ImageDataset(merged_df)
+        image_dataset = ImageDataset(self.merged_df)
         data_loader = DataLoader(image_dataset, batch_size=32, shuffle=False)
 
         features = []
@@ -64,13 +63,13 @@ class ImageRetrieval:
             image_paths.extend(image_dataset.dataFrame.iloc[len(features) - len(extracted_features):len(features)]['objectid'].tolist())
         return features, image_paths
     
-    def retrieve_similar_images(self, query_image_path, metric='euclidean',face_crop=False):
+    def retrieve_similar_images(self, query_image_path, metric='cosine',face_crop=False):
         """
         Retrieves similar images to the query image.
 
         Args:
             query_image_path (str): Path to the query image.
-            metric (str, optional): Distance metric to be used (default -> 'euclidean').
+            metric (str, optional): Distance metric to be used (default -> 'cosine').
             face_crop (bool, optional): Whether to perform face cropping during feature extraction (default is False).
 
         Returns:

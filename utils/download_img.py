@@ -6,7 +6,7 @@ from math import floor
 from joblib import Parallel, delayed
 
 class ImageDownloader:
-        """
+    """
     Utility class for downloading and managing image data from a remote source.
 
     Attributes:
@@ -39,12 +39,10 @@ class ImageDownloader:
         self.ensure_exists(self.loader_root)
         self.ensure_exists(f"{self.loader_root}/annotations")
         self.ensure_exists(f"{self.loader_root}/images",True)
-        self.ensure_exists(f"{self.loader_root}/queryImg",True)
-        
         return self.loader_root
 
     def thumbnail_to_local(self, base_path, object_id):
-         """Generate the local path for storing a thumbnail image."""
+        """ Generate the local path for storing a thumbnail image."""
         image_path = f"{base_path}/images"
         ending = f"{object_id}.jpg"
         return f"{image_path}/{ending}"
@@ -100,11 +98,21 @@ class ImageDownloader:
         print(f"Found {painted_df['objectid'].nunique()} images.")
 
         Parallel(n_jobs=16)(delayed(download_image)(object_id, thumb) for object_id, thumb in tqdm.tqdm(painted_df[['objectid', 'iiifthumburl']].values))
-      
+        
+        existing_files = os.listdir( os.path.join(self.loader_root,'images'))
+        # Extract objectid from the file names
+        existing_objectids = [int(filename.split('.')[0]) for filename in existing_files]
+        # Find the difference between self.merged_df['objectid'] and existing_objectids
+        missing_objectids = set(painted_df['objectid']) - set(existing_objectids)
+        # Drop rows with missing objectids from self.merged_df
+        painted_df = painted_df[~painted_df['objectid'].isin(missing_objectids)]
+        # Save the dataframe as a csv file
+        painted_df.to_csv('./data/merged.csv', index=False)
+        print(f"{len(missing_objectids)} rows with URL error are dropped") 
         print(f"{len(painted_df['objectid'])} images download completed")
         
     def merge_and_filter(self, objects_df, images_df, output_file):
-         """
+        """
         Merge and filter DataFrames to get relevant data.
 
         Args:
@@ -124,7 +132,6 @@ class ImageDownloader:
         #filter 'paintings' using element column.
 
         painted_df = painted_df.drop_duplicates().drop('depictstmsobjectid', axis=1)
-        painted_df.to_csv(output_file + '/merged.csv', index=False)
 
         return painted_df
 

@@ -33,7 +33,7 @@ class ResNetCompressor():
         return features.view(features.size(0), -1)
 
 class FaceCropper():
-       """
+    """
     A class for cropping faces from images and extracting features using a compressor model.
 
     Attributes:

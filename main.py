@@ -39,8 +39,11 @@ def main(args):
     eval.visualize_images(similar_images,query_image_path)
     
     # 2. Quantitative Evaluation
-    eval.calculate_average_precision(similar_images,query_image_path)
+    avg_ssim, avg_rmse = eval.calculate_average_precision(similar_images,query_image_path)
     
+    print('AVG_SSIM : ',avg_ssim)
+    print('AVG_RMSE : ',avg_rmse)
+       
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Retrieve similar images.")
@@ -51,7 +54,7 @@ if __name__ == "__main__":
     parser.add_argument('--percent', type=int, default=100, help="Percentage of paintings to download. Default is 100.")
     parser.add_argument('--query_image_path', type=str, ,default="./data/images/0.jpg",
                         help="Path to the query image.")
-    parser.add_argument('--metric', type=str, default='euclidean', choices=['euclidean', 'cosine','manhattan'],
+    parser.add_argument('--metric', type=str, default='cosine', choices=['euclidean', 'cosine','manhattan'],
                         help="Distance metric for the similarity calculation. (default: euclidean).")
     parser.add_argument('--face_crop', action='store_true', help="Enable face cropping to focus on facial similarity.")
 

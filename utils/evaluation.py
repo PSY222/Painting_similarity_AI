@@ -1,9 +1,16 @@
+import os
+import numpy as np
+from PIL import Image
+import skimage
+from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import mean_squared_error as mse
 import matplotlib.pyplot as plt
 from PIL import Image
+from skimage.transform import resize
 
 class evaluation_metrics:
     def __init__(self,img_path):
-        self.img_path img_path
+        self.img_path = img_path
         
     def visualize_images(self, images, query_image_path):
         """
@@ -31,56 +38,35 @@ class evaluation_metrics:
         plt.tight_layout()
         plt.show()
 
-    
-    import numpy as np
-    from skimage.metrics import structural_similarity as ssim
-    from PIL import Image
 
-    def calculate_average_precision(query_image_path, similar_images_paths):
+    def eval_results(self,query_image_path, similar_images_paths):
         # Load the query image
-        query_image = np.array(Image.open(query_image_path).convert("RGB"))
-
-        # Calculate SSIM for each similar image
+        query_image = np.array(Image.open(query_image_path).convert('RGB'))
+        query_image = resize(query_image, (200, 200, 3))
+        
+        # Initialize lists to store scores for each similar image
         ssim_scores = []
-        for image_path in similar_images_paths:
-            similar_image = np.array(Image.open(image_path).convert("RGB"))
-            ssim_score = ssim(query_image, similar_image, multichannel=True)
+        rmse_scores = []
+        psnr_scores = []
+        uqi_scores = []
+
+        # Loop through each similar image
+        for (file_name,_) in similar_images_paths:
+            # Load the similar image
+            img_path = os.path.join(self.img_path, str(file_name)+'.jpg')
+            similar_image = np.array(Image.open(img_path).convert('RGB'))
+            similar_image = resize(similar_image, (200, 200, 3))
+            
+            # Calculate SSIM
+            ssim_score, _ = ssim(query_image, similar_image, channel_axis=2, full=True,win_size=7,data_range=query_image.max() - query_image.min())
             ssim_scores.append(ssim_score)
 
-        # Sort the similar images by SSIM scores
-        sorted_indices = np.argsort(ssim_scores)[::-1]
-        sorted_similar_images_paths = [similar_images_paths[i] for i in sorted_indices]
+            # Calculate RMSE
+            rmse_score = np.sqrt(mse(query_image, similar_image))
+            rmse_scores.append(rmse_score)
 
-        # Calculate Average Precision (AP)
-        precision = []
-        num_retrieved_images = len(similar_images_paths)
-        num_relevant_retrieved = 0
-        for i, idx in enumerate(sorted_indices):
-            if idx == 0:  # Assuming the first retrieved image is relevant (query image)
-                num_relevant_retrieved += 1
-                precision_at_i = num_relevant_retrieved / (i + 1)
-                precision.append(precision_at_i)
+        # Calculate average scores
+        avg_ssim = np.mean(ssim_scores)
+        avg_rmse = np.mean(rmse_scores)
 
-        average_precision = sum(precision) / len(precision) if precision else 0.0
-        
-        print('AP(SSIM score) : ', average_precision)
-
-        return average_precision
-
-# Example usage:
-# query_image_path = "query_image.jpg"
-# similar_images_paths = ["similar_image1.jpg", "similar_image2.jpg", "similar_image3.jpg"]
-# ap = calculate_average_precision(query_image_path, similar_images_paths)
-# print("Average Precision:", ap)
-
-def average_precision(found: Sequence[str], ground_truth: str) -> float:
-    groups = list(map(lambda index: (found[index], found[: index + 1]), range(len(found))))
-    groups = list(filter(lambda group: group[0] == ground_truth, groups))
-    precisions = list(map(lambda group: precision(found=group[1], ground_truth=group[0]), groups))
-    return fmean(precisions) if precisions else 0.
-
-
-def mean_average_precision(retrievals: Sequence[Sequence[str]], labels: Sequence[str]) -> float:
-    average_precisions = list(
-        map(lambda groups: average_precision(found=groups[0], ground_truth=groups[1]), list(zip(retrievals, labels)))
-    )
+        return avg_ssim, avg_rmse
