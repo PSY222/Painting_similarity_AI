@@ -1,10 +1,22 @@
 import os
 from PIL import Image
-from sklearn.model_selection import train_test_split
-from torch.utils.data import Dataset
 from torchvision import transforms
+from torch.utils.data import Dataset
 
 class ImageDataset(Dataset):
+        """
+    Custom PyTorch Dataset class for loading images from a DataFrame.
+
+    Args:
+        dataFrame (DataFrame): DataFrame containing image information.(merged.csv)
+        image_dir (str): Directory path where images are stored.
+        transform (callable, optional): Optional transform to be applied to the images.
+
+    Methods:
+        __getitem__(self, idx): Retrieves and transforms the image at the specified index.
+        __len__(self): Returns the total number of images in the dataset.
+    """
+        
     def __init__(self, dataFrame, image_dir="./data/images", transform=None):
         self.dataFrame = dataFrame
         self.image_dir = image_dir
