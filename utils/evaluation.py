@@ -5,14 +5,13 @@ import skimage
 from skimage.metrics import structural_similarity as ssim
 from skimage.metrics import mean_squared_error as mse
 import matplotlib.pyplot as plt
-from PIL import Image
 from skimage.transform import resize
 
 class evaluation_metrics:
     def __init__(self,img_path):
         self.img_path = img_path
         
-    def visualize_images(self, images, query_image_path):
+    def visualize_images(self, similar_images_paths, query_image_path):
         """
         Visualizes the query image along with its similar images.
 
@@ -24,19 +23,19 @@ class evaluation_metrics:
         query_image = Image.open(query_image_path)
 
         # Plot query image
-        fig, axes = plt.subplots(1, len(images) + 1, figsize=(15, 5))
+        fig, axes = plt.subplots(1, len(similar_images_paths) + 1, figsize=(15, 5))
         axes[0].imshow(query_image)
         axes[0].set_title("Query Image")
         axes[0].axis('off')
 
         # Plot similar images
-        for i, (file_name, distance) in enumerate(images, start=1):
+        for i, (file_name, distance) in enumerate(similar_images_paths, start=1):
             image = Image.open(os.path.join(self.img_path, str(file_name)+'.jpg'))
             axes[i].imshow(image)
             axes[i].set_title(f'Similar Image {i} ({file_name})')
             axes[i].axis('off')
         plt.tight_layout()
-        plt.show()
+        plt.show();
 
 
     def eval_results(self,query_image_path, similar_images_paths):
