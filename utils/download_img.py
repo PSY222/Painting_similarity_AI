@@ -73,7 +73,6 @@ class ImageDownloader:
         """
         print("Downloading data...")
         base_dir = base_dir or self.get_base_dir()
-
         objects_dimensions_csv = self.check_csv_exists('objects_dimensions')
         objects_df = pd.read_csv(objects_dimensions_csv)
         
