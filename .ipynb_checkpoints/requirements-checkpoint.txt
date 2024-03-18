@@ -1,2 +1,0 @@
-facenet-pytorch
-scikit-image>=0.18.3
