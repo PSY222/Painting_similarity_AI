@@ -39,7 +39,6 @@ class ImageRetrieval:
         """
         Extracts features from the images.
         """
-        # merged_df = self.merged_df[self.merged_df['objectid'] != 10] # objectid with URL error
         #Load the images
         image_dataset = ImageDataset(self.merged_df)
         data_loader = DataLoader(image_dataset, batch_size=32, shuffle=False)
