@@ -102,17 +102,22 @@ Ensure that you have the required packages installed by running:
 ```
 
 2. Run the Main Script:
-Execute the main script with appropriate arguments:
- 
---compressor vgg: Specifies the compressor to use (in this case, 'vgg').
---download: Indicates to download necessary resources.
---percent 100: Specifies the percentage (100%) of datasets you want to use. (default 100)
---query_image_path "./data/images/0.jpg": Specifies the path to the query image.
---metric cosine: Specifies the similarity metric to be used (default 'cosine').
-
+Execute the main script with appropriate argument.
 ```
 !python main.py --compressor vgg --download --percent 100 --query_image_path "./data/images/0.jpg" --metric cosine
 ```
+ 
+--compressor vgg: Specifies the compressor to use (in this case, 'vgg').
+
+--download: Indicates to download necessary resources.
+
+--percent 100: Specifies the percentage (100%) of datasets you want to use. (default 100)
+
+--query_image_path "./data/images/0.jpg": Specifies the path to the query image.
+
+--metric cosine: Specifies the similarity metric to be used (default 'cosine').
+
+
  
 
 
